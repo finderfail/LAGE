@@ -18,8 +18,8 @@ Namespace LAGE
                 Throw New Exception("Failed to load config file: " & configPath)
             End If
             
-            Dim width = config_.GetInt("screen_width", 800)
-            Dim height = config_.GetInt("screen_height", 600)
+            Dim width = config_.GetInt("screen_width", 1280)
+            Dim height = config_.GetInt("screen_height", 720)
             Dim title = config_.Get("window_title", "LAGE Engine")
             
             screen_ = New Screen(width, height, title)
@@ -34,7 +34,7 @@ Namespace LAGE
             Dim startX = config_.GetFloat("player_start_x", 1.5F)
             Dim startY = config_.GetFloat("player_start_y", 1.5F)
             Dim startDir = config_.GetFloat("player_start_dir", 0.0F)
-            Dim fovAngle = config_.GetFloat("player_fov", 1.0472F) ' 60 
+            Dim fovAngle = config_.GetFloat("player_fov", 1.1F) ' 60 
             Dim fovRadius = config_.GetFloat("player_view_distance", 10.0F)
             
             player_ = New Player(startX, startY, startDir, fovAngle, fovRadius)

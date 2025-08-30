@@ -55,7 +55,25 @@ Namespace LAGE
             If x >= 0 AndAlso x < width_ AndAlso y >= 0 AndAlso y < height_ Then
                 Return mapData_(y)(x)
             End If
-            Return " "c
+            Return "#"c 
+        End Function
+
+        Public Function IsWalkable(x As Single, y As Single) As Boolean
+            ' i hate it
+            Dim floorX As Integer = CInt(Math.Floor(x))
+            Dim floorY As Integer = CInt(Math.Floor(y))
+            Dim ceilX As Integer = CInt(Math.Ceiling(x))
+            Dim ceilY As Integer = CInt(Math.Ceiling(y))
+            
+
+            If GetTile(floorX, floorY) = "#"c OrElse
+               GetTile(floorX, ceilY) = "#"c OrElse
+               GetTile(ceilX, floorY) = "#"c OrElse
+               GetTile(ceilX, ceilY) = "#"c Then
+                Return False
+            End If
+            
+            Return True
         End Function
 
         Public Function GetWidth() As Integer
@@ -65,5 +83,13 @@ Namespace LAGE
         Public Function GetHeight() As Integer
             Return height_
         End Function
+        
+        Public Sub SetTile(x As Integer, y As Integer, tile As Char)
+            If x >= 0 AndAlso x < width_ AndAlso y >= 0 AndAlso y < height_ Then
+                Dim row As Char() = mapData_(y).ToCharArray()
+                row(x) = tile
+                mapData_(y) = New String(row)
+            End If
+        End Sub
     End Class
 End Namespace

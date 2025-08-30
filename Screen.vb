@@ -12,13 +12,12 @@ Namespace LAGE
         Private height_ As Integer
         Private pixels_ As UInteger()
         
-        ' SFML объекты
+        ' SFML 
         Private window_ As RenderWindow
         Private texture_ As Texture
         Private sprite_ As Sprite
         Private image_ As Image
         
-        ' События для обработки ввода
         Public Event KeyPressed As EventHandler(Of KeyEventArgs)
         Public Event KeyReleased As EventHandler(Of KeyEventArgs)
         Public Event MouseMoved As EventHandler(Of MouseMoveEventArgs)
@@ -36,8 +35,7 @@ Namespace LAGE
             window_ = New RenderWindow(mode, title, Styles.Close)
             texture_ = New Texture(CUInt(width), CUInt(height))
             sprite_ = New Sprite(texture_)
-            
-            ' Настройка обработчиков событий SFML
+
             AddHandler window_.KeyPressed, AddressOf OnKeyPressed
             AddHandler window_.KeyReleased, AddressOf OnKeyReleased
             AddHandler window_.MouseMoved, AddressOf OnMouseMoved
@@ -45,7 +43,7 @@ Namespace LAGE
             AddHandler window_.MouseButtonReleased, AddressOf OnMouseReleased
             AddHandler window_.Closed, AddressOf OnClosed
             
-            ' Установка частоты кадров
+            ' frame limit (engine side)
             window_.SetFramerateLimit(60)
         End Sub
 
@@ -96,7 +94,7 @@ Namespace LAGE
             Dim byteArray(pixels_.Length * 4 - 1) As Byte
             For i As Integer = 0 To pixels_.Length - 1
                 Dim color As UInteger = pixels_(i)
-                ' Разбираем цвет на компоненты: AARRGGBB
+                ' AARRGGBB
                 Dim a As Byte = CByte((color >> 24) And &HFF)
                 Dim r As Byte = CByte((color >> 16) And &HFF)
                 Dim g As Byte = CByte((color >> 8) And &HFF)
@@ -108,16 +106,13 @@ Namespace LAGE
                 byteArray(i * 4 + 3) = a
             Next
 
-            ' Создаем изображение из массива байтов
             image_ = New Image(CUInt(width_), CUInt(height_), byteArray)
             texture_.Update(image_)
-    
-            ' Очищаем окно и рисуем спрайт
+
             window_.Clear(Color.Black)
             window_.Draw(sprite_)
             window_.Display()
-    
-            ' Обрабатываем события окна
+
             window_.DispatchEvents()
         End Sub
 

@@ -35,26 +35,38 @@ Namespace LAGE
             End Try
         End Function
 
-        Public Function [Get](key As String) As String
+        Public Function [Get](key As String, Optional defaultValue As String = "") As String
             If configData_.ContainsKey(key) Then
                 Return configData_(key)
             End If
-            Return ""
+            Return defaultValue
         End Function
 
-        Public Function GetInt(key As String) As Integer
+        Public Function GetInt(key As String, Optional defaultValue As Integer = 0) As Integer
             If configData_.ContainsKey(key) Then
                 Try
                     Return Integer.Parse(configData_(key))
                 Catch ex As FormatException
                     Console.Error.WriteLine("Error: Invalid integer value for key '" & key & "'")
-                    Return 0
+                    Return defaultValue
                 Catch ex As OverflowException
                     Console.Error.WriteLine("Error: Invalid integer value range for key '" & key & "'")
-                    Return 0
+                    Return defaultValue
                 End Try
             End If
-            Return 0
+            Return defaultValue
+        End Function
+
+        Public Function GetFloat(key As String, Optional defaultValue As Single = 0.0F) As Single
+            If configData_.ContainsKey(key) Then
+                Try
+                    Return Single.Parse(configData_(key), Globalization.CultureInfo.InvariantCulture)
+                Catch ex As FormatException
+                    Console.Error.WriteLine("Error: Invalid float value for key '" & key & "'")
+                    Return defaultValue
+                End Try
+            End If
+            Return defaultValue
         End Function
 
         Public Sub [Set](key As String, value As String)

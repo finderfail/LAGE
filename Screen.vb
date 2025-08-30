@@ -1,23 +1,52 @@
-﻿Imports System
+﻿Imports SFML.Graphics
+Imports SFML.Window
+Imports System
+Imports System.Runtime.InteropServices
+Imports SFML.System
 
 Namespace LAGE
     Public Class Screen
+        Implements IDisposable
+
         Private width_ As Integer
         Private height_ As Integer
         Private pixels_ As UInteger()
-
-        ' These would be replaced with appropriate .NET UI components in the implementing game
-        Private window_ As IntPtr
-        Private renderer_ As IntPtr
-        Private texture_ As IntPtr
+        
+        ' SFML объекты
+        Private window_ As RenderWindow
+        Private texture_ As Texture
+        Private sprite_ As Sprite
+        Private image_ As Image
+        
+        ' События для обработки ввода
+        Public Event KeyPressed As EventHandler(Of KeyEventArgs)
+        Public Event KeyReleased As EventHandler(Of KeyEventArgs)
+        Public Event MouseMoved As EventHandler(Of MouseMoveEventArgs)
+        Public Event MousePressed As EventHandler(Of MouseButtonEventArgs)
+        Public Event MouseReleased As EventHandler(Of MouseButtonEventArgs)
+        Public Event Closed As EventHandler
 
         Public Sub New(width As Integer, height As Integer, title As String)
             width_ = width
             height_ = height
             pixels_ = New UInteger(width * height - 1) {}
-
-            ' In a real implementation, the game would initialize its UI framework
-            ' This is just a placeholder for the engine
+            
+            ' Инициализация SFML окна
+            Dim mode As New VideoMode(CUInt(width), CUInt(height))
+            window_ = New RenderWindow(mode, title, Styles.Close)
+            texture_ = New Texture(CUInt(width), CUInt(height))
+            sprite_ = New Sprite(texture_)
+            
+            ' Настройка обработчиков событий SFML
+            AddHandler window_.KeyPressed, AddressOf OnKeyPressed
+            AddHandler window_.KeyReleased, AddressOf OnKeyReleased
+            AddHandler window_.MouseMoved, AddressOf OnMouseMoved
+            AddHandler window_.MouseButtonPressed, AddressOf OnMousePressed
+            AddHandler window_.MouseButtonReleased, AddressOf OnMouseReleased
+            AddHandler window_.Closed, AddressOf OnClosed
+            
+            ' Установка частоты кадров
+            window_.SetFramerateLimit(60)
         End Sub
 
         Public Function GetWidth() As Integer
@@ -29,9 +58,7 @@ Namespace LAGE
         End Function
 
         Public Sub Clear(color As UInteger)
-            For i As Integer = 0 To pixels_.Length - 1
-                pixels_(i) = color
-            Next
+            Array.Fill(pixels_, color)
         End Sub
 
         Public Sub SetPixel(x As Integer, y As Integer, color As UInteger)
@@ -40,39 +67,101 @@ Namespace LAGE
             End If
         End Sub
 
-        ' Overloaded method for character-based rendering
-        Public Sub SetPixel(x As Integer, y As Integer, pixelChar As Char)
-            ' Convert character to a color value
-            Dim color As UInteger = ConvertCharToColor(pixelChar)
-            SetPixel(x, y, color)
+        ' Обработчики событий SFML
+        Private Sub OnKeyPressed(sender As Object, e As KeyEventArgs)
+            RaiseEvent KeyPressed(Me, e)
         End Sub
 
-        Private Function ConvertCharToColor(pixelChar As Char) As UInteger
-            ' Fixed: Use correct UInteger literals
-            Select Case pixelChar
-                Case "#"c
-                    Return CUInt(&HFFFFFF)  ' White
-                Case "="c
-                    Return CUInt(&HCCCCCC)  ' Light gray
-                Case "-"c
-                    Return CUInt(&H999999)  ' Medium gray
-                Case ","c
-                    Return CUInt(&H666666)  ' Dark gray
-                Case "."c
-                    Return CUInt(&H333333)  ' Very dark gray
-                Case Else
-                    Return CUInt(&H0)  ' Black
-            End Select
-        End Function
+        Private Sub OnKeyReleased(sender As Object, e As KeyEventArgs)
+            RaiseEvent KeyReleased(Me, e)
+        End Sub
+
+        Private Sub OnMouseMoved(sender As Object, e As MouseMoveEventArgs)
+            RaiseEvent MouseMoved(Me, e)
+        End Sub
+
+        Private Sub OnMousePressed(sender As Object, e As MouseButtonEventArgs)
+            RaiseEvent MousePressed(Me, e)
+        End Sub
+
+        Private Sub OnMouseReleased(sender As Object, e As MouseButtonEventArgs)
+            RaiseEvent MouseReleased(Me, e)
+        End Sub
+
+        Private Sub OnClosed(sender As Object, e As EventArgs)
+            RaiseEvent Closed(Me, EventArgs.Empty)
+        End Sub
 
         Public Sub Render()
-            ' This method would be implemented by the game to update its UI
-            ' The engine just provides the interface
+            Dim byteArray(pixels_.Length * 4 - 1) As Byte
+            For i As Integer = 0 To pixels_.Length - 1
+                Dim color As UInteger = pixels_(i)
+                ' Разбираем цвет на компоненты: AARRGGBB
+                Dim a As Byte = CByte((color >> 24) And &HFF)
+                Dim r As Byte = CByte((color >> 16) And &HFF)
+                Dim g As Byte = CByte((color >> 8) And &HFF)
+                Dim b As Byte = CByte(color And &HFF)
+                ' В SFML Image ожидает байты в порядке R, G, B, A
+                byteArray(i * 4) = r
+                byteArray(i * 4 + 1) = g
+                byteArray(i * 4 + 2) = b
+                byteArray(i * 4 + 3) = a
+            Next
+
+            ' Создаем изображение из массива байтов
+            image_ = New Image(CUInt(width_), CUInt(height_), byteArray)
+            texture_.Update(image_)
+    
+            ' Очищаем окно и рисуем спрайт
+            window_.Clear(Color.Black)
+            window_.Draw(sprite_)
+            window_.Display()
+    
+            ' Обрабатываем события окна
+            window_.DispatchEvents()
         End Sub
 
-        ' Method to get the pixel data for rendering by the game
-        Public Function GetPixelData() As UInteger()
-            Return pixels_
+        Public Function IsOpen() As Boolean
+            Return window_.IsOpen
         End Function
+
+        Public Sub Close()
+            window_.Close()
+        End Sub
+
+        Public Function GetMousePosition() As Vector2i
+            Return Mouse.GetPosition(window_)
+        End Function
+
+        Public Sub SetMousePosition(position As Vector2i)
+            Mouse.SetPosition(position, window_)
+        End Sub
+
+        Public Sub SetMouseVisible(visible As Boolean)
+            window_.SetMouseCursorVisible(visible)
+        End Sub
+
+#Region "IDisposable Support"
+        Private disposedValue As Boolean = False
+
+        Protected Overridable Sub Dispose(disposing As Boolean)
+            If Not disposedValue Then
+                If disposing Then
+                    window_.Dispose()
+                    texture_.Dispose()
+                    sprite_.Dispose()
+                    If image_ IsNot Nothing Then
+                        image_.Dispose()
+                    End If
+                End If
+                disposedValue = True
+            End If
+        End Sub
+
+        Public Sub Dispose() Implements IDisposable.Dispose
+            Dispose(True)
+        End Sub
+#End Region
+
     End Class
 End Namespace

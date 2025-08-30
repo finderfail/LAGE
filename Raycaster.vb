@@ -98,21 +98,25 @@ Namespace LAGE
             Dim startY As Integer = (screen_.GetHeight() - wallHeight) \ 2
             Dim endY As Integer = (screen_.GetHeight() + wallHeight) \ 2
 
+            ' Используем суффикс UI для шестнадцатеричных литералов
+            Dim baseColor As UInteger = &HFF6A5ACDUI ' Пример: фиолетовый цвет
+            Dim brightness As Single = 1.0F - Math.Min(1.0F, distance / 10.0F)
+    
+            ' Извлекаем компоненты цвета
+            Dim r As Byte = CByte((baseColor >> 16) And &HFF)
+            Dim g As Byte = CByte((baseColor >> 8) And &HFF)
+            Dim b As Byte = CByte(baseColor And &HFF)
+    
+            ' Применяем затемнение
+            r = CByte(r * brightness)
+            g = CByte(g * brightness)
+            b = CByte(b * brightness)
+    
+            ' Собираем цвет обратно (с альфа-каналом 255)
+            Dim color As UInteger = CUInt((r << 16) Or (g << 8) Or b Or &HFF000000UI)
+
             For y As Integer = startY To endY - 1
-                Dim brightness As Single = 1.0F - Min(1.0F, distance / 10.0F)
-                Dim pixelChar As Char = "#"c
-
-                If brightness < 0.2F Then
-                    pixelChar = "."c  ' most far wall
-                ElseIf brightness < 0.4F Then
-                    pixelChar = ","c  ' far wall
-                ElseIf brightness < 0.6F Then
-                    pixelChar = "-"c  ' mid wall
-                ElseIf brightness < 0.8F Then
-                    pixelChar = "="c  ' near wall
-                End If
-
-                screen_.SetPixel(x, y, pixelChar)
+                screen_.SetPixel(x, y, color)
             Next
         End Sub
     End Class

@@ -10,6 +10,16 @@
     <AssemblyName>LAGE</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="SFML.Net" Version="2.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="$(NuGetPackageRoot)sfml.net\2.5.0\runtimes\win-x64\native\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DefineDebug>false</DefineDebug>
     <OutputPath>bin\Release/</OutputPath>

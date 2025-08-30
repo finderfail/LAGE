@@ -1,0 +1,28 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Player.vb">
+    <Files>
+      <File FileName="Player.vb" Line="12" Column="110" />
+      <File FileName="Map.vb" />
+      <File FileName="Screen.vb" />
+      <File FileName="Config.vb" />
+      <File FileName="Raycaster.vb" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="LexiaEngine3" expanded="True">
+            <Node name="LexiaEngine3" expanded="True">
+              <Node name="Player.vb" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+</Properties>

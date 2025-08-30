@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <RootNamespace>LAGE</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <Configurations>Release;Debug</Configurations>
+    <Company>Lexia Team</Company>
+    <Product>LAGE</Product>
+    <AssemblyName>LAGE</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DefineDebug>false</DefineDebug>
+    <OutputPath>bin\Release/</OutputPath>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+</Project>

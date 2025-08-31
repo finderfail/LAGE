@@ -44,7 +44,7 @@ Namespace LAGE
             AddHandler window_.Closed, AddressOf OnClosed
             
             ' frame limit (engine side)
-            window_.SetFramerateLimit(60)
+            window_.SetFramerateLimit(120)
         End Sub
 
         Public Function GetWidth() As Integer

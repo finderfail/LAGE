@@ -60,10 +60,10 @@ Namespace LAGE
 
         Public Function IsWalkable(x As Single, y As Single) As Boolean
             ' i hate it
-            Dim floorX As Integer = CInt(Math.Floor(x))
-            Dim floorY As Integer = CInt(Math.Floor(y))
-            Dim ceilX As Integer = CInt(Math.Ceiling(x))
-            Dim ceilY As Integer = CInt(Math.Ceiling(y))
+            Dim floorX As Integer = CInt(x)
+            Dim floorY As Integer = CInt(y)
+            Dim ceilX As Integer = CInt(x - 1.1F)
+            Dim ceilY As Integer = CInt(y - 1.2F)
             
 
             If GetTile(floorX, floorY) = "#"c OrElse

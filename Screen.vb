@@ -30,7 +30,7 @@ Namespace LAGE
             height_ = height
             pixels_ = New UInteger(width * height - 1) {}
             
-            ' Инициализация SFML окна
+            ' Инициализация SFML window
             Dim mode As New VideoMode(CUInt(width), CUInt(height))
             window_ = New RenderWindow(mode, title, Styles.Close)
             texture_ = New Texture(CUInt(width), CUInt(height))
